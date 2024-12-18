@@ -1,0 +1,67 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: action
+      POSTGRES_DB: pigeonSecurity
+    networks:
+      - my_network
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak-container
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: postgres-container
+      DB_DATABASE: keycloak
+      DB_USER: postgres
+      DB_PASSWORD: action
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    networks:
+      - my_network
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    depends_on:
+      - postgres
+    command: start-dev
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-app-container
+    networks:
+      - my_network
+    ports:
+      - "8443:8443"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-container:5432/pigeonSecurity
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: action
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://keycloak-container:8080/realms/pigeonSecurity
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_ID: spring-boot-app
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET: YOUR_CLIENT_SECRET
+    volumes:
+      - keystore_volume:/app
+    depends_on:
+      - postgres
+      - keycloak
+
+volumes:
+  postgres_data:
+  keycloak_data:
+  keystore_volume:
+
+networks:
+  my_network:
+    driver: bridge
