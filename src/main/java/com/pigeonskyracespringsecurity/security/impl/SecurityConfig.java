@@ -1,15 +1,17 @@
 package com.pigeonskyracespringsecurity.security.impl;
 
-import com.pigeonskyracespringsecurity.exception.CustomAccessDeniedHandler;
-import com.pigeonskyracespringsecurity.exception.CustomAuthenticationEntryPoint;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-i
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -21,27 +23,34 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
-                .cors().configurationSource(corsConfigurationSource)
-                .and()
-                .csrf().disable()
-                .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/register", "/login").permitAll();
-                    registry.requestMatchers("/admin/**").hasRole("admin");
-                    registry.requestMatchers("/user/**").hasAnyRole("admin", "user");
-                    registry.requestMatchers("/organizer/**").hasAnyRole("admin", "organizer");
-                    registry.anyRequest().authenticated();
-                })
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt());
+                .authorizeHttpRequests(authz -> authz
+                        // Public endpoints
+                        .requestMatchers("/register", "/login", "/oauth2/authorization/**").permitAll()
+
+                        // Protected endpoints (require specific roles)
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/user/**").hasAuthority("ROLE_USER")
+                        .requestMatchers("/organizer/**").hasAuthority("ROLE_ORGANIZER")
+
+                        // All other endpoints require authentication
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))  // Use custom converter for JWT
+                );
+
+        // Enable CORS and disable CSRF (if necessary)
+        http.cors(customizer -> customizer.configurationSource(corsConfigurationSource));
+        http.csrf(customizer -> customizer.disable());
+
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("https://localhost:8443");
         configuration.addAllowedHeader("Authorization, Origin, Content-Type, Accept, cache-control");
@@ -55,6 +64,23 @@ public class SecurityConfig {
         return source;
     }
 
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access.roles");  // The roles are in this claim
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");  // Ensure the prefix matches what is in the JWT
+
+        JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
+        authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return authenticationConverter;
+    }
+
+    // Configure the JwtDecoder to validate the JWT using Keycloak's public key
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        String keycloakUrl = "http://keycloak-container:8080/realms/pigeonSecurity/protocol/openid-connect/certs";
+        return NimbusJwtDecoder.withJwkSetUri(keycloakUrl).build();
+    }
 
 
 

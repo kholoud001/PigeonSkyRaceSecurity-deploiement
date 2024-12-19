@@ -2,6 +2,7 @@ package com.pigeonskyracespringsecurity.controller;
 
 import com.pigeonskyracespringsecurity.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class AdminController {
         return "You have access to this secured endpoint!";
     }
 
-   // @Secured("ROLE_ADMIN")
+   //admin @Secured("ROLE_ADMIN")
     @PostMapping("/changeUserRole")
         public String changeUserRole(@RequestParam String username, @RequestParam String newRole) {
             try {
@@ -28,4 +29,9 @@ public class AdminController {
                 return e.getMessage();
             }
         }
+    @GetMapping("/manage")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> manageAdmins() {
+        return ResponseEntity.ok("Welcome Admin! You have access to this endpoint.");
+    }
 }

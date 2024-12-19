@@ -58,7 +58,9 @@ public class UserServiceImpl implements UserService {
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
             throw new AccessDeniedException("Only admins can change user roles");
         }
-        
+
+        System.out.println("Current User Authorities: " + currentUser.getAuthorities());
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 

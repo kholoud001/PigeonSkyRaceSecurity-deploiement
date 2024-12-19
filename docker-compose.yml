@@ -39,7 +39,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spring-app-container
+    container_name: spring-boot-app2-container
     networks:
       - my_network
     ports:
@@ -50,7 +50,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: action
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://keycloak-container:8080/realms/pigeonSecurity
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_ID: spring-boot-app
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET: YOUR_CLIENT_SECRET
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET: HC8CAdJXicjYIHBXBTOUvTifFGqnqoXM
     volumes:
       - keystore_volume:/app
     depends_on:
