@@ -18,11 +18,11 @@ import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pigeons")
+@RequestMapping("/user")
 public class PigeonController {
     private final PigeonService pigeonService;
 
-    @PostMapping(("/add"))
+    @PostMapping(("/pigeons/add"))
     public ResponseEntity<PigeonDTO> addPigeonToCompetition(@Valid @RequestBody PigeonDTO pigeonDTO) {
         try {
             PigeonDTO responseDTO = pigeonService.addPigeonToCompetition(pigeonDTO);

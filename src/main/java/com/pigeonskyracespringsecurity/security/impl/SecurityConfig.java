@@ -28,30 +28,51 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler  customAccessDeniedHandler;
 
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//        return httpSecurity
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(registry -> {
+//                    registry.requestMatchers("/register").permitAll();
+//                    registry.requestMatchers("/admin/**").hasRole("ADMIN");
+//                    registry.requestMatchers("/competitions/**").hasAnyRole("ADMIN", "ORGANIZER");
+//                    registry.requestMatchers("/pigeons/**").hasAnyRole("ADMIN","USER");
+//                    registry.anyRequest().authenticated();
+//                })
+//                .formLogin().disable()
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authenticationProvider(customAuthenticationProvider)
+//                .httpBasic(Customizer.withDefaults())
+//                .exceptionHandling(exception -> exception
+//                        .accessDeniedHandler(customAccessDeniedHandler)
+//                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+//
+//                )
+//                .build();
+//    }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/register").permitAll();
-                    registry.requestMatchers("/admin/**").hasRole("ADMIN");
-                    registry.requestMatchers("/competitions/**").hasAnyRole("ADMIN", "ORGANIZER");
-                    registry.requestMatchers("/pigeons/**").hasAnyRole("ADMIN","USER");
+                    // Publicly accessible resources (e.g., register)
+                    registry.requestMatchers("/register", "/login").permitAll();
+
+                    // Admin specific resources (only accessible by admins)
+                    registry.requestMatchers("/admin/**").hasRole("admin");
+
+                    // User and admin resources (users and admins can access these)
+                    registry.requestMatchers("/user/**").hasAnyRole("admin", "user");
+
+                    // Organizer specific resources (only accessible by organizers)
+                    registry.requestMatchers("/organizer/**").hasRole("organizer");
+
+                    // Everything else needs to be authenticated
                     registry.anyRequest().authenticated();
                 })
-                .formLogin().disable()
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(customAuthenticationProvider)
-                .httpBasic(Customizer.withDefaults())
-                .exceptionHandling(exception -> exception
-                        .accessDeniedHandler(customAccessDeniedHandler)
-                        .authenticationEntryPoint(customAuthenticationEntryPoint)
-
-                )
-                .build();
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt());  // The updated method for configuring JWT
+        return http.build();
     }
-
-
 
 
 

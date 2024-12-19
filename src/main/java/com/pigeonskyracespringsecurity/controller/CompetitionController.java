@@ -16,6 +16,8 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/organizer")
+
 public class CompetitionController {
 
     private final CompetitionService competitionService;
