@@ -4,11 +4,19 @@ pipeline {
         DOCKER_IMAGE = "spring-boot-app3"
         DOCKER_CONTAINER = "spring-boot-app3-container"
     }
+    options {
+        durableTaskOption(org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL: '86400')  // Heartbeat check interval
+    }
     stages {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/kholoud001/PigeonSkyRaceSecurity-deploiement.git'
+            }
+        }
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()  // Clean the workspace before building
             }
         }
         stage('Build and Compile') {
