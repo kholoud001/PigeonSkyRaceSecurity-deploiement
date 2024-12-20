@@ -5,7 +5,8 @@ pipeline {
         DOCKER_CONTAINER = "spring-boot-app3-container"
     }
     options {
-        durableTaskOption(org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL: '86400')  // Heartbeat check interval
+        // Correct syntax for pipeline options
+        timeout(time: 60, unit: 'MINUTES') // Example option
     }
     stages {
         stage('Checkout Code') {
@@ -16,7 +17,7 @@ pipeline {
         }
         stage('Clean Workspace') {
             steps {
-                cleanWs()  // Clean the workspace before building
+                cleanWs()
             }
         }
         stage('Build and Compile') {
