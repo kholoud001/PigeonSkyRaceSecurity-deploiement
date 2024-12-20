@@ -4,20 +4,10 @@ pipeline {
         DOCKER_IMAGE = "spring-boot-app3"
         DOCKER_CONTAINER = "spring-boot-app3-container"
     }
-    options {
-        // Correct syntax for pipeline options
-        timeout(time: 60, unit: 'MINUTES') // Example option
-    }
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/kholoud001/PigeonSkyRaceSecurity-deploiement.git'
-            }
-        }
-        stage('Clean Workspace') {
-            steps {
-                cleanWs()
+                git branch: 'main', url: 'https://github.com/kholoud001/PigeonSkyRaceSecurity-deploiement.git'
             }
         }
         stage('Build and Compile') {
@@ -30,20 +20,23 @@ pipeline {
                 sh 'mvn test'
             }
         }
+        stage('Verify Docker') {
+            steps {
+                sh 'docker --version'
+            }
+        }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE .'
+                sh 'docker build -t spring-boot-app3 .'
             }
         }
         stage('Deploy in Docker') {
             steps {
-                script {
-                    sh '''
-                    docker stop $DOCKER_CONTAINER || true
-                    docker rm $DOCKER_CONTAINER || true
-                    docker run -d --name $DOCKER_CONTAINER -p 8080:8080 $DOCKER_IMAGE
-                    '''
-                }
+                sh '''
+                docker stop spring-boot-app3-container || true
+                docker rm spring-boot-app3-container || true
+                docker run -d --name spring-boot-app3-container -p 8080:8080 spring-boot-app3
+                '''
             }
         }
     }
