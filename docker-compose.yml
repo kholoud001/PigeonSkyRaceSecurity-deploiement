@@ -57,10 +57,29 @@ services:
       - postgres
       - keycloak
 
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: jenkins-container
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+    networks:
+      - my_network
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - spring-app
+
+
 volumes:
   postgres_data:
   keycloak_data:
   keystore_volume:
+  jenkins_home:
+
 
 networks:
   my_network:
