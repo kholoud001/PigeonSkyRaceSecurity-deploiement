@@ -20,15 +20,28 @@ public class AdminController {
     }
 
    //admin @Secured("ROLE_ADMIN")
+//    @PostMapping("/changeUserRole")
+//        public String changeUserRole(@RequestParam String username, @RequestParam String newRole) {
+//            try {
+//                userService.changeRole(username, newRole);
+//                return "User role updated successfully!";
+//            } catch (Exception e) {
+//                return e.getMessage();
+//            }
+//        }
+
+    @Secured("ROLE_ADMIN")
     @PostMapping("/changeUserRole")
-        public String changeUserRole(@RequestParam String username, @RequestParam String newRole) {
-            try {
-                userService.changeRole(username, newRole);
-                return "User role updated successfully!";
-            } catch (Exception e) {
-                return e.getMessage();
-            }
+    public String changeUserRole(@RequestParam String username, @RequestParam String newRole) {
+        try {
+            userService.changeRole(username, newRole);
+            return "User role updated successfully!";
+        } catch (Exception e) {
+            return e.getMessage();
         }
+    }
+
+
     @GetMapping("/manage")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> manageAdmins() {

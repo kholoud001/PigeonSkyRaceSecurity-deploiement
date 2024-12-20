@@ -107,7 +107,7 @@ public class SecurityConfig {
 
                 // Manually convert roles to authorities
                 List<GrantedAuthority> authorities = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority(role))  // Convert roles to authorities directly
+                        .map(role -> new SimpleGrantedAuthority(role))
                         .collect(Collectors.toList());
 
                 // Print the authorities for debugging
