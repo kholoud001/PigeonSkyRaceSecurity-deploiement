@@ -65,7 +65,7 @@ pipeline {
             cleanWs()
 
             echo "Publishing JUnit test results..."
-            junit 'target/surefire-reports/*.xml'
+            junit '**/target/surefire-reports/*.xml'
         }
 
         success {
