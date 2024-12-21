@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven_3.9.9'  
+    }
+
     environment {
         DOCKER_IMAGE = "spring-boot-app3"
     }
@@ -59,9 +63,6 @@ pipeline {
         always {
             echo "Cleaning up workspace..."
             cleanWs()
-
-            echo "Publishing JUnit test results..."
-            junit 'target/surefire-reports/*.xml'
         }
 
         success {
@@ -70,6 +71,13 @@ pipeline {
 
         failure {
             echo "Build or deployment failed."
+        }
+
+        always {
+            node {
+                echo "Publishing JUnit test results..."
+                junit 'target/surefire-reports/*.xml'
+            }
         }
     }
 }
