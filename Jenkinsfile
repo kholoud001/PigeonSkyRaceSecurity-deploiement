@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        DOCKER_IMAGE = "spring-boot-app3"
+        DOCKER_IMAGE = "spring-boot-app"
     }
 
     stages {
