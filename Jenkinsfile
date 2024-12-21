@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven_3.9.9' 
+        maven 'Maven_3.9.9'  // This should match the name you gave in Global Tool Configuration
     }
 
     environment {
@@ -63,6 +63,9 @@ pipeline {
         always {
             echo "Cleaning up workspace..."
             cleanWs()
+
+            echo "Publishing JUnit test results..."
+            junit 'target/surefire-reports/*.xml'
         }
 
         success {
@@ -71,11 +74,6 @@ pipeline {
 
         failure {
             echo "Build or deployment failed."
-        }
-
-        always {
-            echo "Publishing JUnit test results..."
-            junit 'target/surefire-reports/*.xml'
         }
     }
 }
