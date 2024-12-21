@@ -59,6 +59,9 @@ pipeline {
         always {
             echo "Cleaning up workspace..."
             cleanWs()
+
+            echo "Publishing JUnit test results..."
+            junit 'target/surefire-reports/*.xml'
         }
 
         success {
@@ -67,13 +70,6 @@ pipeline {
 
         failure {
             echo "Build or deployment failed."
-        }
-
-        always {
-            node {
-                echo "Publishing JUnit test results..."
-                junit 'target/surefire-reports/*.xml'
-            }
         }
     }
 }
