@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven_3.9.9'  
+        maven 'Maven_3.9.9' 
     }
 
     environment {
@@ -74,10 +74,8 @@ pipeline {
         }
 
         always {
-            node {
-                echo "Publishing JUnit test results..."
-                junit 'target/surefire-reports/*.xml'
-            }
+            echo "Publishing JUnit test results..."
+            junit 'target/surefire-reports/*.xml'
         }
     }
 }
