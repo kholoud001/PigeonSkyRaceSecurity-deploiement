@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven_3.9.9'  // This should match the name you gave in Global Tool Configuration
+        maven 'Maven_3.9.9'
+        dockerTool 'docker'
+
     }
 
     environment {
