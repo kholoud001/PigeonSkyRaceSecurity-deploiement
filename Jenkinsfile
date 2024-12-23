@@ -37,28 +37,35 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
-            steps {
-                echo "Building Docker image..."
-                sh "docker build -t ${DOCKER_IMAGE} ."
-            }
-        }
+//         stage('Docker Build') {
+//             steps {
+//                 echo "Building Docker image..."
+//                 sh "docker build -t ${DOCKER_IMAGE} ."
+//             }
+//         }
+//
+//         stage('Docker Push') {
+//             steps {
+//                 echo "Pushing Docker image to Docker Hub..."
+//                 sh "docker push ${DOCKER_IMAGE}"
+//             }
+//         }
 
-        stage('Docker Push') {
-            steps {
-                echo "Pushing Docker image to Docker Hub..."
-                sh "docker push ${DOCKER_IMAGE}"
-            }
-        }
+//         stage('Deploy') {
+//             steps {
+//                 echo "Deploying Docker container..."
+//                 sh 'docker stop pigeon-spring-security || true'
+//                 sh 'docker rm pigeon-spring-security || true'
+//                 sh "docker run -d --name pigeon-spring-security -p 8085:8080 ${DOCKER_IMAGE}"
+//             }
+//         }
 
-        stage('Deploy') {
-            steps {
-                echo "Deploying Docker container..."
-                sh 'docker stop pigeon-spring-security || true'
-                sh 'docker rm pigeon-spring-security || true'
-                sh "docker run -d --name pigeon-spring-security -p 8085:8080 ${DOCKER_IMAGE}"
+            stage('Test'){
+            steps{
+            echo "Running tests ..."
+            sh 'mvn test'
+                }
             }
-        }
     }
 
     post {
