@@ -50,7 +50,6 @@ public class Pigeon {
     @JoinColumn(name = "user_id")
     private User user;
 
-
     @ManyToOne
     @JoinColumn(name = "colombier_id")
     private Colombier colombier;

@@ -22,6 +22,13 @@ public class UserDTO {
     private RoleType roleType;
 
     private List<CompetitionDTO> competitions;
+    private String colombierName;
+    private double latitude;
+    private double longitude;
+
+
+
+
 
 }
 

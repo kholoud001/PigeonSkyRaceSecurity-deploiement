@@ -36,17 +36,25 @@ public class UserServiceImpl implements UserService {
             throw new UsernameAlreadyExistsException(userDTO.getUsername());
         }
 
-        Role role = roleRepository.findByRoleType(RoleType.ROLE_USER)
+        Role userRole = roleRepository.findByRoleType(RoleType.ROLE_USER)
                 .orElseThrow(() -> new IllegalArgumentException("Role not found!"));
 
+        // Use UserMapper to map DTO to User entity
         User user = userMapper.toUser(userDTO);
         user.setUsername(userDTO.getUsername());
-        user.setRole(role);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(userRole);
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        if (userDTO.getColombierName() != null) {
+            Colombier colombier = new Colombier();
+            colombier.setName(userDTO.getColombierName());
+            colombier.setLatitude(userDTO.getLatitude());
+            colombier.setLongitude(userDTO.getLongitude());
+            user.setColombier(colombier);
+        }
 
         return userRepository.save(user);
     }
-
 
 
     @Override

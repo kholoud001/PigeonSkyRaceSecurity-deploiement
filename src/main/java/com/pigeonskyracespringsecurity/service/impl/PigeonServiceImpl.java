@@ -11,11 +11,10 @@ import com.pigeonskyracespringsecurity.repository.UserRepository;
 import com.pigeonskyracespringsecurity.service.PigeonService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,21 +26,6 @@ public class PigeonServiceImpl implements PigeonService {
 
     @Override
     @Transactional
-//    public Pigeon addPigeonToCompetition(PigeonDTO pigeonDTO) {
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        Competition competition = competitionRepository.findById(pigeonDTO.getCompetitionId())
-//                .orElseThrow(() -> new RuntimeException("Competition not found"));
-//
-//        Pigeon pigeon = pigeonMapper.toEntity(pigeonDTO);
-//        pigeon.setUser(user);
-//        pigeon.setCompetition(competition);
-//
-//        return pigeonRepository.save(pigeon);
-//    }
     public PigeonDTO addPigeonToCompetition(PigeonDTO pigeonDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
@@ -66,6 +50,26 @@ public class PigeonServiceImpl implements PigeonService {
 
         return responseDTO;
     }
+
+    @Override
+    public PigeonDTO addPigeon(PigeonDTO pigeonDTO) {
+        Pigeon pigeon = pigeonMapper.toEntity(pigeonDTO);
+
+        Pigeon savedPigeon = pigeonRepository.save(pigeon);
+
+        return pigeonMapper.toDto(savedPigeon);
+    }
+
+    @Override
+    public List<Pigeon> findByRingNumbers(List<String> ringNumbers) {
+        return pigeonRepository.findByRingNumberIn(ringNumbers);
+    }
+
+    @Override
+    public List<Pigeon> saveAll(List<Pigeon> pigeons) {
+        return pigeonRepository.saveAll(pigeons);
+    }
+
 
 
 
