@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class CompetitionController {
 
     
 
-    @PostMapping("/competitions")
+    @PostMapping("/add/competition")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_ORGANIZER')")
     public ResponseEntity<?> createCompetition(
             @Valid @RequestBody CompetitionDTO competitionDTO,
@@ -40,5 +41,45 @@ public class CompetitionController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(competition);
     }
+
+    @GetMapping("/competitions")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_ORGANIZER')")
+    public ResponseEntity<List<Competition>> getAllCompetitions() {
+        List<Competition> competitions = competitionService.getAllCompetitions();
+        return ResponseEntity.ok(competitions);
+    }
+
+    @GetMapping("/competition/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_ORGANIZER')")
+    public ResponseEntity<Competition> getCompetitionById(@PathVariable Long id) {
+        Competition competition = competitionService.getCompetitionById(id);
+        return ResponseEntity.ok(competition);
+    }
+
+
+    @DeleteMapping("/delete/competition/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteCompetition(@PathVariable Long id) {
+        competitionService.deleteCompetition(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/update/competition/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_ORGANIZER')")
+    public ResponseEntity<Competition> updateCompetition(@PathVariable Long id, @Valid @RequestBody CompetitionDTO competitionDTO) {
+        Competition updatedCompetition = competitionService.updateCompetition(id, competitionDTO);
+        return ResponseEntity.ok(updatedCompetition);
+    }
+
+
+    @GetMapping("/competitions/search")
+    public ResponseEntity<List<Competition>> searchCompetitionsByName(@RequestParam String name) {
+        List<Competition> competitions = competitionService.searchCompetitionsByName(name);
+        return ResponseEntity.ok(competitions);
+    }
+
+
+
+
 
 }
