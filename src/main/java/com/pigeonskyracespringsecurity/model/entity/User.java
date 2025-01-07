@@ -34,7 +34,7 @@ public class User {
     private List<Competition> competitions = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Competition> pigeons = new ArrayList<>();
+    private List<Pigeon> pigeons = new ArrayList<>();
 
 
 }

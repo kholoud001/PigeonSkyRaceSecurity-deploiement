@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -23,18 +24,21 @@ public class CompetitionController {
     private final CompetitionService competitionService;
     private final UserService userService;
 
+    
 
     @PostMapping("/competitions")
-   // @Secured({"ROLE_ORGANIZER","ROLE_ADMIN"})
-    public ResponseEntity<?> createCompetition(@Valid @RequestBody CompetitionDTO competitionDTO, Principal principal) {
-        String username = principal.getName();
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_ORGANIZER')")
+    public ResponseEntity<?> createCompetition(
+            @Valid @RequestBody CompetitionDTO competitionDTO,
+            @RequestParam String username) {
 
         User user = userService.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Authenticated user not found!"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found!"));
 
         competitionDTO.setUserId(user.getId());
         Competition competition = competitionService.createCompetition(competitionDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(competition);
     }
+
 }
