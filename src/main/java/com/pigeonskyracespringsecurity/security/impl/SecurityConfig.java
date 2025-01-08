@@ -39,7 +39,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/register", "/login", "/oauth2/authorization/**").permitAll()
+                        .requestMatchers("/register", "/login", "/oauth2/authorization/**","/competitions/").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/user/**").hasAuthority("ROLE_USER")
                         .requestMatchers("/organizer/**").hasAuthority("ROLE_ORGANIZER")

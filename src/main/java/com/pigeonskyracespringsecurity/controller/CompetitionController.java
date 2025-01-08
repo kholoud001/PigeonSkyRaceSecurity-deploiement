@@ -84,7 +84,7 @@ public class CompetitionController {
 
 
 
-    @PostMapping("/add-to-competition")
+    @PostMapping("/add/pigeon/competition")
     @PreAuthorize("hasRole('ROLE_ORGANIZER')")
     public ResponseEntity<?> addPigeonsToCompetition(@RequestBody List<String> ringNumbers, @RequestParam Long competitionId) {
         try {

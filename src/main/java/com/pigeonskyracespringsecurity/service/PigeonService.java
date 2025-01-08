@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PigeonService {
     //Pigeon addPigeonToCompetition(PigeonDTO pigeonDTO) throws AccessDeniedException;
-    PigeonDTO addPigeonToCompetition(PigeonDTO pigeonDTO)throws AccessDeniedException;;
+    //PigeonDTO addPigeonToCompetition(PigeonDTO pigeonDTO)throws AccessDeniedException;;
 
     PigeonDTO addPigeon(PigeonDTO pigeonDTO);
 
@@ -16,5 +16,11 @@ public interface PigeonService {
 
     List<Pigeon> saveAll(List<Pigeon> pigeons);
 
-//    PigeonDTO addPigeon(String ringNumber, String gender, int age, String color, Long userId);
+    PigeonDTO updatePigeon(Long pigeonId, PigeonDTO pigeonDTO);
+
+    void deletePigeon(Long pigeonId);
+
+    PigeonDTO getPigeonById(Long pigeonId);
+
+    List<PigeonDTO> getAllPigeons();
 }

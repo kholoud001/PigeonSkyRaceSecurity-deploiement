@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,34 +29,50 @@ public class PigeonController {
 
 
 
-    @PostMapping(("/add/pigeons/competition"))
-    public ResponseEntity<PigeonDTO> addPigeonToCompetition(@Valid @RequestBody PigeonDTO pigeonDTO) {
-        try {
-            PigeonDTO responseDTO = pigeonService.addPigeonToCompetition(pigeonDTO);
-            return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
-        } catch (RuntimeException ex) {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        } catch (AccessDeniedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @PostMapping("/add/pigeons")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> addPigeon(@Valid @RequestBody PigeonDTO pigeonDTO, @RequestParam String username) {
-        // Find the user by username (you already have this part)
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        try {
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Set the userId in the pigeonDTO before passing it to the service
-        pigeonDTO.setUserId(user.getId());
+            pigeonDTO.setUserId(user.getId());
 
-        // Call the service method to add the pigeon
-        PigeonDTO savedPigeonDTO = pigeonService.addPigeon(pigeonDTO);
+            PigeonDTO savedPigeonDTO = pigeonService.addPigeon(pigeonDTO);
 
-        // Return the saved pigeon as a response
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedPigeonDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPigeonDTO);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + ex.getMessage());
+        }
     }
+
+    @PutMapping("/update/pigeon/{id}")
+    public ResponseEntity<PigeonDTO> updatePigeon(@PathVariable Long id, @RequestBody PigeonDTO pigeonDTO) {
+        PigeonDTO updatedPigeon = pigeonService.updatePigeon(id, pigeonDTO);
+        return ResponseEntity.ok(updatedPigeon);
+    }
+
+    @DeleteMapping("/delete/pigeon/{id}")
+    public ResponseEntity<Void> deletePigeon(@PathVariable Long id) {
+        pigeonService.deletePigeon(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/pigeon/{id}")
+    public ResponseEntity<PigeonDTO> getPigeonById(@PathVariable Long id) {
+        PigeonDTO pigeon = pigeonService.getPigeonById(id);
+        return ResponseEntity.ok(pigeon);
+    }
+
+    @GetMapping("/pigeons")
+    public ResponseEntity<List<PigeonDTO>> getAllPigeons() {
+        List<PigeonDTO> pigeons = pigeonService.getAllPigeons();
+        return ResponseEntity.ok(pigeons);
+    }
+
+
 
 
 }
