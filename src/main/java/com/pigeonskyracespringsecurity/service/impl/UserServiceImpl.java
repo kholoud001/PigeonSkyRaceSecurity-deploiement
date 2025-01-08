@@ -92,9 +92,33 @@ public class UserServiceImpl implements UserService {
 
 
 
-    @Override
-    public Optional<User> findByUsername(String name){
 
+
+    @Override
+    public User updateUser(Long userId, UserDTO userDTO) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (userDTO.getUsername() != null) {
+            user.setUsername(userDTO.getUsername());
+        }
+
+        if (userDTO.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        }
+
+        if (userDTO.getColombierName() != null) {
+            Colombier colombier = new Colombier();
+            colombier.setName(userDTO.getColombierName());
+            colombier.setLatitude(userDTO.getLatitude());
+            colombier.setLongitude(userDTO.getLongitude());
+            user.setColombier(colombier);
+        }
+
+        return userRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> findByUsername(String name) {
         return userRepository.findByUsername(name);
     }
 
@@ -104,8 +128,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> searchUsers(String searchTerm) {
+        return userRepository.findByUsernameContainingOrColombierNameContaining(searchTerm, searchTerm);
+    }
+
+    @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
     }
-
 }

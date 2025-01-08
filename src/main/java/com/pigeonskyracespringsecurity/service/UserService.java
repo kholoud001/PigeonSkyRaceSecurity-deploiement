@@ -18,9 +18,15 @@ public interface UserService {
 
     User changeRole(String username, String newRole);
 
+    User updateUser(Long userId, UserDTO userDTO);
+
     Optional<User> findByUsername(String name);
 
     List<User> findAllUsers();
 
+    List<User> searchUsers(String searchTerm);
+
     void deleteUser(Long userId);
 }
+
+

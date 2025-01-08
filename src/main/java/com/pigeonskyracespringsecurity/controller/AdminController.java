@@ -1,11 +1,15 @@
 package com.pigeonskyracespringsecurity.controller;
 
+import com.pigeonskyracespringsecurity.DTO.UserDTO;
+import com.pigeonskyracespringsecurity.model.entity.User;
 import com.pigeonskyracespringsecurity.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -32,6 +36,35 @@ public class AdminController {
         }
     }
 
+
+    @Secured("ROLE_ADMIN")
+    @PutMapping("/updateUser/{userId}")
+    public ResponseEntity<String> updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO) {
+        try {
+            userService.updateUser(userId, userDTO);
+            return ResponseEntity.ok("User updated successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/searchUsers")
+    public ResponseEntity<List<User>> searchUsers(@RequestParam String searchTerm) {
+        List<User> users = userService.searchUsers(searchTerm);
+        return ResponseEntity.ok(users);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/deleteUser/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok("User deleted successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
 
     @GetMapping("/manage")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
