@@ -49,24 +49,28 @@ public class PigeonController {
     }
 
     @PutMapping("/update/pigeon/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<PigeonDTO> updatePigeon(@PathVariable Long id, @RequestBody PigeonDTO pigeonDTO) {
         PigeonDTO updatedPigeon = pigeonService.updatePigeon(id, pigeonDTO);
         return ResponseEntity.ok(updatedPigeon);
     }
 
     @DeleteMapping("/delete/pigeon/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Void> deletePigeon(@PathVariable Long id) {
         pigeonService.deletePigeon(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/pigeon/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<PigeonDTO> getPigeonById(@PathVariable Long id) {
         PigeonDTO pigeon = pigeonService.getPigeonById(id);
         return ResponseEntity.ok(pigeon);
     }
 
     @GetMapping("/pigeons")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<PigeonDTO>> getAllPigeons() {
         List<PigeonDTO> pigeons = pigeonService.getAllPigeons();
         return ResponseEntity.ok(pigeons);

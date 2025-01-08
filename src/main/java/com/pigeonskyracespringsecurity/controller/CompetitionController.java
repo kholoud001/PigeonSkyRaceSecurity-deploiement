@@ -109,6 +109,14 @@ public class CompetitionController {
         }
     }
 
+    @GetMapping("/pigeon/{id}")
+    @PreAuthorize("hasRole('ROLE_ORGANIZER')")
+    public ResponseEntity<PigeonDTO> getPigeonById(@PathVariable Long id) {
+        PigeonDTO pigeon = pigeonService.getPigeonById(id);
+        return ResponseEntity.ok(pigeon);
+    }
+
+
 
 
 
