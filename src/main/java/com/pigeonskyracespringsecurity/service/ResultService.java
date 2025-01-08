@@ -13,4 +13,6 @@ public interface ResultService {
     Result saveResult(Result result);
 
     void deleteResult(Long id);
+
+    void uploadResults(Long competitionId, List<Result> results);
 }
