@@ -1,15 +1,15 @@
 package com.pigeonskyracespringsecurity.service.impl;
 
 import com.pigeonskyracespringsecurity.DTO.ColombierDTO;
+import com.pigeonskyracespringsecurity.config.UnauthorizedException;
 import com.pigeonskyracespringsecurity.mapper.ColombierMapper;
 import com.pigeonskyracespringsecurity.model.entity.Colombier;
 import com.pigeonskyracespringsecurity.model.entity.User;
 import com.pigeonskyracespringsecurity.repository.ColombierRepository;
 import com.pigeonskyracespringsecurity.repository.UserRepository;
 import com.pigeonskyracespringsecurity.service.ColombierService;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,22 +21,15 @@ public class ColombierServiceImpl implements ColombierService {
     private final ColombierMapper colombierMapper;
 
     @Override
-    public ColombierDTO createColombier(ColombierDTO colombierDTO) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
+    @Transactional
+    public Colombier addColombier(Long userId, Colombier colombier) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (user.getColombier() != null) {
-            throw new IllegalStateException("User already has a colombier.");
-        }
+        // Set the user who created the Colombier
+        colombier.setUser(user);
 
-        Colombier colombier = colombierMapper.toEntity(colombierDTO);
-        colombier = colombierRepository.save(colombier);
-
-        user.setColombier(colombier);
-        userRepository.save(user);
-
-        return colombierMapper.toDto(colombier);
+        return colombierRepository.save(colombier);
     }
 
     @Override
@@ -61,10 +54,15 @@ public class ColombierServiceImpl implements ColombierService {
     }
 
     @Override
-    public void deleteColombier(Long id) {
-        Colombier colombier = colombierRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Colombier not found with id " + id));
+    @Transactional
+    public void deleteColombier(Long colombierId, Long userId) {
+        Colombier colombier = colombierRepository.findById(colombierId)
+                .orElseThrow(() -> new IllegalArgumentException("Colombier not found"));
 
-        colombierRepository.delete(colombier);
+        if (!colombier.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException("You can only delete your own Colombier");
+        }
+
+        colombierRepository.deleteById(colombierId);
     }
 }
