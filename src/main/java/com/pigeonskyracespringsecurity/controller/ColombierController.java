@@ -3,7 +3,9 @@ package com.pigeonskyracespringsecurity.controller;
 
 import com.pigeonskyracespringsecurity.DTO.ColombierDTO;
 import com.pigeonskyracespringsecurity.service.ColombierService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +39,14 @@ public class ColombierController {
     @DeleteMapping("/delete/colombier/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deleteColombier(@PathVariable Long id) {
-        colombierService.deleteColombier(id);
-        return ResponseEntity.noContent().build();
+        try {
+            colombierService.deleteColombier(id);
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
 }

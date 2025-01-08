@@ -50,7 +50,7 @@ public class Pigeon {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "colombier_id")
     private Colombier colombier;
 }

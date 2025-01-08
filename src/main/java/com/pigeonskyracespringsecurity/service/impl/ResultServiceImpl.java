@@ -61,7 +61,14 @@ public class ResultServiceImpl implements ResultService {
                 .orElseThrow(() -> new IllegalArgumentException("Competition not found"));
 
         for (Result result : results) {
-            Pigeon pigeon = result.getPigeon();
+            Pigeon pigeon = pigeonRepository.findById(result.getPigeon().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Pigeon not found"));
+
+            // Check if pigeon has a valid colombier
+            if (pigeon.getColombier() == null) {
+                throw new IllegalArgumentException("Pigeon does not have a valid colombier");
+            }
+
             // Calculate distance using Haversine formula
             double distance = haversine(competition.getLatitude(), competition.getLongitude(),
                     pigeon.getColombier().getLatitude(), pigeon.getColombier().getLongitude());

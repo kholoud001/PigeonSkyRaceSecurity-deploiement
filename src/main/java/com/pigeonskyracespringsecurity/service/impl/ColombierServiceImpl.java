@@ -7,6 +7,7 @@ import com.pigeonskyracespringsecurity.model.entity.User;
 import com.pigeonskyracespringsecurity.repository.ColombierRepository;
 import com.pigeonskyracespringsecurity.repository.UserRepository;
 import com.pigeonskyracespringsecurity.service.ColombierService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,7 @@ public class ColombierServiceImpl implements ColombierService {
     @Override
     public void deleteColombier(Long id) {
         Colombier colombier = colombierRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Colombier not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Colombier not found with id " + id));
 
         colombierRepository.delete(colombier);
     }
