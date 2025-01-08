@@ -44,7 +44,7 @@ public class ColombierController {
     @DeleteMapping("/delete/colombier/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deleteColombier(@PathVariable Long colombierId, Authentication authentication) {
-        Long userId = Long.valueOf(authentication.getName()); 
+        Long userId = Long.valueOf(authentication.getName());
 
         colombierService.deleteColombier(colombierId, userId);
         return ResponseEntity.noContent().build();

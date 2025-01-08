@@ -42,8 +42,8 @@ public class ResultController {
         resultService.deleteResult(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ORGANIZER')")
     @PostMapping("/uploadResults/{competitionId}")
+    @PreAuthorize("hasRole('ROLE_ORGANIZER')")
     public ResponseEntity<String> uploadResults(@PathVariable Long competitionId, @RequestBody List<Result> results) {
         try {
             resultService.uploadResults(competitionId, results);
