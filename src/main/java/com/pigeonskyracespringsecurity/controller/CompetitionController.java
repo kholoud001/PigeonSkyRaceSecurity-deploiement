@@ -49,6 +49,8 @@ public class CompetitionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(competition);
     }
 
+
+
     @GetMapping("/competitions")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_ORGANIZER')")
     public ResponseEntity<List<Competition>> getAllCompetitions() {
@@ -79,11 +81,7 @@ public class CompetitionController {
     }
 
 
-    @GetMapping("/competitions/search")
-    public ResponseEntity<List<Competition>> searchCompetitionsByName(@RequestParam String name) {
-        List<Competition> competitions = competitionService.searchCompetitionsByName(name);
-        return ResponseEntity.ok(competitions);
-    }
+
 
 
     @PostMapping("/add-to-competition")

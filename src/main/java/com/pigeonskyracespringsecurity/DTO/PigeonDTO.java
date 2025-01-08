@@ -26,4 +26,6 @@ public class PigeonDTO {
 
     private Long userId;
 
+    private Long colombierId;
+
 }

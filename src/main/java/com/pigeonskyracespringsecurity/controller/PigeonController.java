@@ -45,15 +45,19 @@ public class PigeonController {
     @PostMapping("/add/pigeons")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> addPigeon(@Valid @RequestBody PigeonDTO pigeonDTO, @RequestParam String username) {
-        // Fetch the user based on the provided username
+        // Find the user by username (you already have this part)
         User user = userService.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        // Set the userId in the pigeonDTO before passing it to the service
         pigeonDTO.setUserId(user.getId());
 
+        // Call the service method to add the pigeon
         PigeonDTO savedPigeonDTO = pigeonService.addPigeon(pigeonDTO);
 
+        // Return the saved pigeon as a response
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPigeonDTO);
     }
+
 
 }

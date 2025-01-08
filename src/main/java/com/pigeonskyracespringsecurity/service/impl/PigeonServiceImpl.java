@@ -2,9 +2,11 @@ package com.pigeonskyracespringsecurity.service.impl;
 
 import com.pigeonskyracespringsecurity.DTO.PigeonDTO;
 import com.pigeonskyracespringsecurity.mapper.PigeonMapper;
+import com.pigeonskyracespringsecurity.model.entity.Colombier;
 import com.pigeonskyracespringsecurity.model.entity.Competition;
 import com.pigeonskyracespringsecurity.model.entity.Pigeon;
 import com.pigeonskyracespringsecurity.model.entity.User;
+import com.pigeonskyracespringsecurity.model.enums.Gender;
 import com.pigeonskyracespringsecurity.repository.CompetitionRepository;
 import com.pigeonskyracespringsecurity.repository.PigeonRepository;
 import com.pigeonskyracespringsecurity.repository.UserRepository;
@@ -53,11 +55,37 @@ public class PigeonServiceImpl implements PigeonService {
 
     @Override
     public PigeonDTO addPigeon(PigeonDTO pigeonDTO) {
-        Pigeon pigeon = pigeonMapper.toEntity(pigeonDTO);
+        // Fetch the user by userId from the DTO
+        User user = userRepository.findById(pigeonDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        // Fetch the colombier associated with the user
+        Colombier colombier = user.getColombier();
+        if (colombier == null) {
+            throw new IllegalArgumentException("User does not have a colombier.");
+        }
+
+        // Create a new Pigeon entity
+        Pigeon pigeon = new Pigeon();
+        pigeon.setRingNumber(pigeonDTO.getRingNumber());
+        pigeon.setGender(Gender.valueOf(pigeonDTO.getGender()));
+        pigeon.setAge(pigeonDTO.getAge());
+        pigeon.setColor(pigeonDTO.getColor());
+        pigeon.setColombier(colombier); 
+
+        // Save the pigeon to the repository
         Pigeon savedPigeon = pigeonRepository.save(pigeon);
 
-        return pigeonMapper.toDto(savedPigeon);
+        // Map the saved Pigeon entity back to PigeonDTO
+        PigeonDTO savedPigeonDTO = new PigeonDTO();
+        savedPigeonDTO.setRingNumber(savedPigeon.getRingNumber());
+        savedPigeonDTO.setGender(savedPigeon.getGender().name());
+        savedPigeonDTO.setAge(savedPigeon.getAge());
+        savedPigeonDTO.setColor(savedPigeon.getColor());
+        savedPigeonDTO.setUserId(savedPigeon.getUser().getId());
+        savedPigeonDTO.setColombierId(savedPigeon.getColombier().getId());
+
+        return savedPigeonDTO;
     }
 
     @Override
