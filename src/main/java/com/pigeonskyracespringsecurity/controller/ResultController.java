@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/orgnaizer/results")
+@RequestMapping("/organizer/results")
 public class ResultController {
 
     private final ResultService resultService;
