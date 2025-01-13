@@ -55,15 +55,26 @@ public class SecurityConfig {
         return http.build();
     }
 
-
-
+    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://localhost:4200"); 
-        configuration.addAllowedHeader("Authorization, Origin, Content-Type, Accept, cache-control");
-        configuration.addAllowedMethod("HEAD, GET, PUT, POST, OPTIONS");
-        configuration.addExposedHeader("Authorization, Cache-Control");
+        configuration.addAllowedOrigin("http://localhost:4200");
         configuration.setAllowCredentials(true);
+
+        configuration.addAllowedHeader("Authorization");
+        configuration.addAllowedHeader("Origin");
+        configuration.addAllowedHeader("Content-Type");
+        configuration.addAllowedHeader("Accept");
+        configuration.addAllowedHeader("Cache-Control");
+
+        configuration.addAllowedMethod("HEAD");
+        configuration.addAllowedMethod("GET");
+        configuration.addAllowedMethod("PUT");
+        configuration.addAllowedMethod("POST");
+        configuration.addAllowedMethod("OPTIONS");
+
+        configuration.addExposedHeader("Authorization");
+        configuration.addExposedHeader("Cache-Control");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -73,16 +84,8 @@ public class SecurityConfig {
 
 
 
-//    @Bean
-//    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-//        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-//        grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access.roles");
-//        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-//
-//        JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
-//        authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-//        return authenticationConverter;
-//    }
+
+
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
