@@ -57,10 +57,9 @@ public class SecurityConfig {
 
 
 
-    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://localhost:8443");
+        configuration.addAllowedOrigin("https://localhost:4200"); 
         configuration.addAllowedHeader("Authorization, Origin, Content-Type, Accept, cache-control");
         configuration.addAllowedMethod("HEAD, GET, PUT, POST, OPTIONS");
         configuration.addExposedHeader("Authorization, Cache-Control");
@@ -71,6 +70,7 @@ public class SecurityConfig {
 
         return source;
     }
+
 
 
 //    @Bean
