@@ -27,6 +27,8 @@ public interface UserService {
     List<User> searchUsers(String searchTerm);
 
     void deleteUser(Long userId);
+
+    List<User> getAllUsers();
 }
 
 

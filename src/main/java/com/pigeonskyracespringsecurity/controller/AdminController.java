@@ -18,10 +18,17 @@ public class AdminController {
 
     private final UserService userService;
 
-    @GetMapping("/secure")
-    public String securedEndpoint() {
-        return "You have access to this secured endpoint!";
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/allUsers")
+    public ResponseEntity<List<User>> getAllUsers() {
+        try {
+            List<User> users = userService.getAllUsers();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
+
 
 
 
