@@ -92,8 +92,6 @@ public class UserServiceImpl implements UserService {
 
 
 
-
-
     @Override
     public User updateUser(Long userId, UserDTO userDTO) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));

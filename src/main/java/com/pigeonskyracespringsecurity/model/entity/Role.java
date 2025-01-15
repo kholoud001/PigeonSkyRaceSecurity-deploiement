@@ -1,5 +1,6 @@
 package com.pigeonskyracespringsecurity.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pigeonskyracespringsecurity.model.enums.RoleType;
 import jakarta.persistence.*;
@@ -24,6 +25,6 @@ public class Role {
     private RoleType roleType;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JsonBackReference
     private List<User> users;
 }

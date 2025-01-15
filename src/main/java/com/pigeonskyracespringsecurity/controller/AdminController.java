@@ -1,6 +1,7 @@
 package com.pigeonskyracespringsecurity.controller;
 
 import com.pigeonskyracespringsecurity.DTO.UserDTO;
+import com.pigeonskyracespringsecurity.DTO.UserDisplayDTO;
 import com.pigeonskyracespringsecurity.model.entity.User;
 import com.pigeonskyracespringsecurity.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin")
@@ -20,15 +22,26 @@ public class AdminController {
 
     @Secured("ROLE_ADMIN")
     @GetMapping("/allUsers")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserDisplayDTO>> getAllUsers() {
         try {
             List<User> users = userService.getAllUsers();
-            return ResponseEntity.ok(users);
+            if (users.isEmpty()) {
+                return ResponseEntity.noContent().build(); // Handle case where no users are found
+            }
+            List<UserDisplayDTO> userDisplayDTOs = users.stream()
+                    .map(user -> new UserDisplayDTO(
+                            user.getUsername(),
+                            user.getRole().getRoleType(),
+                            user.getColombier() != null ? user.getColombier().getName() : "Unknown"))
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(userDisplayDTOs);
         } catch (Exception e) {
+            // Log the exception for more details
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
         }
     }
-
 
 
 
