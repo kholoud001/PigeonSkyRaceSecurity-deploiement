@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompetitionDTO {
+    private Long id;
     @NotBlank(message = "Competition name must be entered")
     private String name;
 

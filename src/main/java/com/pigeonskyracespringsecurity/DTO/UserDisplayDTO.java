@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDisplayDTO {
+    private Long id;
+
     private String username;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)

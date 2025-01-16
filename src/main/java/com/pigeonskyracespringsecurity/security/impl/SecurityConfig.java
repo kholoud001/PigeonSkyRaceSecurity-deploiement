@@ -71,6 +71,7 @@ public class SecurityConfig {
         configuration.addAllowedMethod("GET");
         configuration.addAllowedMethod("PUT");
         configuration.addAllowedMethod("POST");
+        configuration.addAllowedMethod("DELETE");
         configuration.addAllowedMethod("OPTIONS");
 
         configuration.addExposedHeader("Authorization");

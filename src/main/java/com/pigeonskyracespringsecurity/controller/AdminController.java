@@ -30,6 +30,7 @@ public class AdminController {
             }
             List<UserDisplayDTO> userDisplayDTOs = users.stream()
                     .map(user -> new UserDisplayDTO(
+                            user.getId(),
                             user.getUsername(),
                             user.getRole().getRoleType(),
                             user.getColombier() != null ? user.getColombier().getName() : "Unknown"))
@@ -37,7 +38,6 @@ public class AdminController {
 
             return ResponseEntity.ok(userDisplayDTOs);
         } catch (Exception e) {
-            // Log the exception for more details
             e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
         }

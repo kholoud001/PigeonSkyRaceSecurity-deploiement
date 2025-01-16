@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PigeonDTO {
+    private Long id;
     @NotBlank(message = "ringNumber  must be entered")
     private String ringNumber;
 
