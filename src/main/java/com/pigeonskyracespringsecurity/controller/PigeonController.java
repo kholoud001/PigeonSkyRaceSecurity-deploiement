@@ -76,6 +76,23 @@ public class PigeonController {
         return ResponseEntity.ok(pigeons);
     }
 
+    @GetMapping("/my-pigeons")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<PigeonDTO>> getMyPigeons(@RequestParam String username) {
+        try {
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            List<PigeonDTO> myPigeons = pigeonService.getPigeonsByUserId(user.getId());
+
+            return ResponseEntity.ok(myPigeons);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 
 
 

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -116,6 +117,15 @@ public class PigeonServiceImpl implements PigeonService {
         List<Pigeon> pigeons = pigeonRepository.findAll();
         return pigeons.stream().map(pigeonMapper::toDto).toList();
     }
+
+    @Override
+    public List<PigeonDTO> getPigeonsByUserId(Long userId) {
+        return pigeonRepository.findByUserId(userId)
+                .stream()
+                .map(pigeonMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
 
 
 

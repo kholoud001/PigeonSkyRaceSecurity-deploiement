@@ -23,4 +23,6 @@ public interface PigeonService {
     PigeonDTO getPigeonById(Long pigeonId);
 
     List<PigeonDTO> getAllPigeons();
+
+    List<PigeonDTO> getPigeonsByUserId(Long userId);
 }

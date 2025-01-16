@@ -12,6 +12,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ColombierServiceImpl implements ColombierService {
@@ -65,4 +68,13 @@ public class ColombierServiceImpl implements ColombierService {
 
         colombierRepository.deleteById(colombierId);
     }
+
+    @Override
+    public List<ColombierDTO> getColombiersByUserId(Long userId) {
+        return colombierRepository.findByUserId(userId)
+                .stream()
+                .map(colombierMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
 }

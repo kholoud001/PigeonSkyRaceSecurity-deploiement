@@ -3,7 +3,9 @@ package com.pigeonskyracespringsecurity.controller;
 
 import com.pigeonskyracespringsecurity.DTO.ColombierDTO;
 import com.pigeonskyracespringsecurity.model.entity.Colombier;
+import com.pigeonskyracespringsecurity.model.entity.User;
 import com.pigeonskyracespringsecurity.service.ColombierService;
+import com.pigeonskyracespringsecurity.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -19,6 +23,7 @@ public class ColombierController {
 
 
     private final ColombierService colombierService;
+    private final UserService userService;
 
     @PostMapping("/add/colombier")
     @PreAuthorize("hasRole('USER')")
@@ -49,5 +54,24 @@ public class ColombierController {
         colombierService.deleteColombier(colombierId, userId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/my-colombiers")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<ColombierDTO>> getMyColombiers(@RequestParam String username) {
+        try {
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            List<ColombierDTO> myColombiers = colombierService.getColombiersByUserId(user.getId());
+
+            return ResponseEntity.ok(myColombiers);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
 
 }

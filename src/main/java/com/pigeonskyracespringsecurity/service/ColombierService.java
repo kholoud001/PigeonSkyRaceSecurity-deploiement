@@ -4,6 +4,8 @@ import com.pigeonskyracespringsecurity.DTO.ColombierDTO;
 import com.pigeonskyracespringsecurity.model.entity.Colombier;
 import jakarta.transaction.Transactional;
 
+import java.util.List;
+
 public interface ColombierService {
 
     //ColombierDTO createColombier(ColombierDTO colombierDTO);
@@ -18,4 +20,6 @@ public interface ColombierService {
 
     @Transactional
     void deleteColombier(Long colombierId, Long userId);
+
+    List<ColombierDTO> getColombiersByUserId(Long userId);
 }
